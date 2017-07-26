@@ -165,28 +165,32 @@ contract UnitFundToken is owned {
         return _bonus;
     }
 
-    function buy() payable {
-        require(block.timestamp >= icoSince);
-        require(block.timestamp <= icoTill);
-        require(msg.value > 0);
+    function buyInternal(uint256 time, address sender, uint256 value) payable {
+        require(time >= icoSince);
+        require(time <= icoTill);
+        require(value > 0);
 
-        uint256 amount = msg.value * buyPrice;                  // calculates the amount, 1 ethereum = 205 tokens
-        uint256 bonus = getBonus(collectedEthers, msg.value) * buyPrice;
+        uint256 amount = value * buyPrice;                  // calculates the amount, 1 ethereum = 205 tokens
+        uint256 bonus = getBonus(collectedEthers, value) * buyPrice;
 
         uint256 totalAmount = amount + bonus;
 
         if (balanceOf[this] < totalAmount) throw;               // checks if it has enough to sell
 
-        collectedEthers += msg.value;
-        balanceEthersOf[msg.sender] += msg.value;
-        balanceOf[msg.sender] += totalAmount;                   // adds the amount to buyer's balance
+        collectedEthers += value;
+        balanceEthersOf[sender] += value;
+        balanceOf[sender] += totalAmount;                   // adds the amount to buyer's balance
         balanceOf[this] -= totalAmount;                         // subtracts amount from seller's balance
 
         if(bonus > 0) {
-            BonusEarned(msg.sender, bonus);
+            BonusEarned(sender, bonus);
         }
 
-        Transfer(this, msg.sender, amount);                     // execute an event reflecting the change
+        Transfer(this, sender, amount);                     // execute an event reflecting the change
+    }
+
+    function buy() payable {
+        buyInternal(block.timestamp, msg.sender, msg.value);
     }
 
     function goalReachedInternal(uint256 time) internal returns (bool success) {
@@ -256,7 +260,7 @@ contract UnitFundToken is owned {
     }
 
     /* This unnamed function is called whenever someone tries to send ether to it */
-    function () {
-        throw;     // Prevents accidental sending of ether
+    function () payable {
+        buyInternal(block.timestamp, msg.sender, msg.value);
     }
 }

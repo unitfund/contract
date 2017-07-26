@@ -16,4 +16,9 @@ contract TestUnitFundToken is UnitFundToken {
     function refund(uint256 time) returns (bool success) {
         return refundInternal(time, msg.sender);
     }
+
+    /* This unnamed function is called whenever someone tries to send ether to it */
+    function () payable {
+        buyInternal(block.timestamp, msg.sender, msg.value);
+    }
 }

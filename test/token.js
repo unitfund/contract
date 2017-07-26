@@ -3,7 +3,7 @@ var TestToken = artifacts.require("./TestUnitFundToken.sol");
 
 var BigNumber = require('bignumber.js');
 
-var gasToUse = 4027600;
+var gasToUse = 4712388;
 
 var ethersReceiver = "0xed8e0f84c60587a4f38c2fec3ede1eb02fe0a1e0";
 
@@ -67,7 +67,7 @@ contract('UnitFundToken', function(accounts) {
         return Token.new(icoSince, icoTill, 10000000000).then(function(_instance) {
             instance = _instance;
 
-            return instance.buy(instance.address, {from: accounts[0], value: 1});
+            return instance.buy({from: accounts[0], value: 1});
         }).then(function(result) {
             assert(result.valueOf() !== true, "operation succeed - failing");
             assert.equal(result.receipt.gasUsed, gasToUse, "should have used all the gas");
@@ -80,7 +80,7 @@ contract('UnitFundToken', function(accounts) {
         }).then(function(_instance) {
             instance = _instance;
 
-            return instance.buy(instance.address, {from: accounts[0], value: 1});
+            return instance.buy({from: accounts[0], value: 1});
         }).then(function(result) {
             assert(result.valueOf() !== true, "operation succeed - failing");
             assert.equal(result.receipt.gasUsed, gasToUse, "should have used all the gas");
@@ -101,10 +101,10 @@ contract('UnitFundToken', function(accounts) {
         return Token.new(icoSince, icoTill, 10000000000).then(function(_instance) {
             instance = _instance;
 
-            return instance.buy(instance.address, {from: accounts[0], value: 1000});
+            return instance.buy({from: accounts[0], value: 1000});
         }).then(function(receipt) {
             assert(receipt.valueOf() !== true, "purchase failed");
-
+            
             return instance.balanceOf.call(accounts[0]);
         }).then(function(balance) {
             assert.equal(balance.valueOf(), "256250", "256250 wasn't in the accounts[0] account");
@@ -117,7 +117,7 @@ contract('UnitFundToken', function(accounts) {
         }).then(function(balance) {
             assert.equal(balance.valueOf(), "1000", "1000 wasn't in collectedEthers");
 
-            return instance.buy(instance.address, {from: accounts[1], value: 100000000});
+            return instance.buy({from: accounts[1], value: 100000000});
         }).then(function(receipt) {
             assert(receipt.valueOf() !== true, "purchase failed");
 
@@ -133,7 +133,7 @@ contract('UnitFundToken', function(accounts) {
         }).then(function(balance) {
             assert.equal(balance.valueOf(), "100001000", "100001000 wasn't in collectedEthers");
 
-            return instance.buy(instance.address, {from: accounts[0], value: 1});
+            return instance.buy({from: accounts[0], value: 1});
         }).then(function(receipt) {
             assert(receipt.valueOf() !== true, "purchase failed");
 
@@ -164,7 +164,7 @@ contract('UnitFundToken', function(accounts) {
         return TestToken.new(icoSince, icoTill, 10000000000).then(function(_instance) {
             instance = _instance;
 
-            return instance.buy(instance.address, {from: accounts[0], value: 1000});
+            return instance.buy({from: accounts[0], value: 1000});
         }).then(function(receipt) {
             assert(receipt.valueOf() !== true, "purchase failed");
 
@@ -262,15 +262,12 @@ contract('UnitFundToken', function(accounts) {
         var beforeEthereumsOnReceiver = web3.eth.getBalance(ethersReceiver);
 
         var icoSince = (new Date().getTime() - 86400 * 1000) / 1000;
-        var icoTill = (icoSince + 86400);
-
-        var icoSince = (new Date().getTime() - 86400 * 1000) / 1000;
         var icoTill = (icoSince + 3 * 86400);
 
         return TestToken.new(icoSince, icoTill, 10000000000).then(function(_instance) {
             instance = _instance;
-
-            return instance.buy(instance.address, {from: accounts[0], value: 10000000000});
+            
+            return instance.send(10000000000, {from: accounts[0]});
         }).then(function(receipt) {
             assert(receipt.valueOf() !== true, "purchase failed");
 
