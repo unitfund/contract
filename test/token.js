@@ -276,8 +276,6 @@ contract('UnitFundToken', function(accounts) {
 
             return instance.balanceOf.call(accounts[0]);
         }).then(function(balance) {
-            //@TODO: WHY???
-
             assert.equal(balance.valueOf(), "2562500000000", "2562500000000 wasn't in the accounts[0] account");
 
             return instance.balanceEthersOf.call(accounts[0]);
@@ -341,8 +339,6 @@ contract('UnitFundToken', function(accounts) {
 
             return instance.balanceOf.call(accounts[0]);
         }).then(function(balance) {
-            //@TODO: WHY???
-
             assert.equal(balance.valueOf(), "2562500000000", "2562500000000 wasn't in the accounts[0] account");
 
             return instance.balanceEthersOf.call(accounts[0]);
